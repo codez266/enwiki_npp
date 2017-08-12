@@ -4,6 +4,18 @@ import pandas as pd
 import matplotlib.dates as mdates
 import pdb
 
+"""
+Following SQL query was used on Quarry to get the dataset:
+
+use enwiki_p;
+SELECT EXTRACT(YEAR FROM DATE_FORMAT(log_timestamp,'%Y%m%d%H%i%s')) AS `year`,
+       EXTRACT(MONTH FROM DATE_FORMAT(log_timestamp,'%Y%m%d%H%i%s')) AS `month`,
+	   	log_title, log_page, log_timestamp FROM logging_logindex WHERE log_type='pagetriage-curation'
+        AND log_timestamp between 20151001000000 and 20170731000000
+		ORDER BY `year` ASC, `month` ASC;
+
+"""
+
 page_rereviewsset = 'quarry-20777-re-reviews-of-new-pages-run196734.tsv'
 df = pd.read_csv(page_rereviewsset, delimiter='\t')
 # get total years to iterate on
@@ -22,7 +34,7 @@ for y in years:
         for index, row in reviews_per_month.iterrows():
             page_id = row['log_page']
             # If continuous review entries of a page exist, likely from the same
-            # session, here we're looking at a new page id, add it
+            # session, here we're looking at a new page id so add it
             if prev_id != page_id:
                 page_rereviews[-1] = page_rereviews[-1] + 1
             prev_id = page_id

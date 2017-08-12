@@ -4,6 +4,23 @@ import pandas as pd
 import matplotlib.dates as mdates
 import pdb
 
+"""
+Following SQL query was used on quarry to get the dataset:
+
+use enwiki_p;
+SELECT EXTRACT(YEAR FROM DATE_FORMAT(log_timestamp,'%Y%m%d%H%i%s')) AS `year`,
+                    EXTRACT(MONTH FROM DATE_FORMAT(log_timestamp,'%Y%m%d%H%i%s')) AS `month`,
+                    log_user,
+                    count(*) as reviews_performed
+                        from logging_logindex
+                            WHERE log_type='pagetriage-curation'
+                            AND log_timestamp
+                            between 20151101000000
+                            and 20170801000000 GROUP BY `year`, `month`, log_user
+                        ORDER BY `year` ASC,
+                        `month` ASC;
+"""
+
 review_usersset = 'quarry-20824-users-doing-page-reviews-run196795.tsv'
 col = 'log_user'
 df = pd.read_csv(review_usersset, delimiter='\t')
